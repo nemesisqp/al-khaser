@@ -39,6 +39,7 @@ BOOL HeapFlags();
 
 BOOL Int2DCheck() ;
 
-	 
+void PushPopSS ();
 
+BOOL IsDbgPresentPrefixCheck();
 

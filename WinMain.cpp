@@ -71,8 +71,15 @@ int APIENTRY WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	if (NtQueryObject_ObjectTypesInformation())
 		MessageBoxPrintf(TEXT("Detected from : NtQueryObject_ObjectTypesInformation"), szReversingDetected );	
 
-	if (CloseHandleAPI ())
-		MessageBoxPrintf(TEXT("Detected from : CloseHandle () API"), szReversingDetected ); 
+
+
+	if(Int2DCheck())
+		MessageBoxPrintf(TEXT("Detected from : Interrupt 2D"), szReversingDetected );
+
+		PushPopSS ()
+
+	if (IsDbgPresentPrefixCheck())
+		MessageBoxPrintf(TEXT("Detected from : Instruction Prefixes Check"), szReversingDetected );
 
 	if (HeapFlags())
 		MessageBoxPrintf(TEXT("Detected from : Heap Flags"), szReversingDetected );
@@ -84,12 +91,12 @@ int APIENTRY WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 
 
-	 if(Int2DCheck())
-		MessageBoxPrintf(TEXT("Detected from : Interrupt 2D"), szReversingDetected );
-
+	if (CloseHandleAPI ())
+		MessageBoxPrintf(TEXT("Detected from : CloseHandle () API"), szReversingDetected ); 
 
 
 	else
-			MessageBox(NULL,  L"Did you hack me ? :)",szReversingNotDetected , MB_OK + MB_ICONINFORMATION);
+
+		MessageBox(NULL,  L"Did you hack me ? :)",szReversingNotDetected , MB_OK + MB_ICONINFORMATION);
 
 }

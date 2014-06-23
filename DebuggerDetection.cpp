@@ -494,19 +494,15 @@ BOOL CloseHandleAPI()
 	// This anti-debug, though extremely powerful, does not seem to be widely used 
 	// by malicious programs.
 
-	char IsDbgPresent=0;
-	__asm {
+		__try {
+			CloseHandle((HANDLE) 0x99999999);
+		}
+		
+		__except( STATUS_INVALID_HANDLE ) {
+			return TRUE;
+		}
 	
-			push offset not_debugged 
-			push dword ptr fs:[0] 
-			mov fs:[0], esp 
-			push 1234h ;invalid handle 
-			call CloseHandle 
 
-			mov IsDbgPresent, 1 
-			not_debugged: 
-			}
-	return IsDbgPresent;
 }
 
 BOOL HeapFlags()
@@ -548,7 +544,12 @@ BOOL ForceFlags ()
 
 BOOL Int2DCheck()
 {
-	// depends on the debugger ! 
+	// The Int2DCheck function will check to see if a debugger
+	// is attached to the current process. It does this by setting up
+	// SEH and using the Int 2D instruction which will only cause an
+	// exception if there is no debugger. Also when used in OllyDBG
+	// it will skip a byte in the disassembly and will create
+
     __try
     {
         __asm
@@ -564,4 +565,43 @@ BOOL Int2DCheck()
     }
     
     return true;
+}
+
+void PushPopSS()
+{
+	// By manipulating the stack segment through the use of push ss and pop ss,
+	// we can cause the debugger to execute instructions unwillingly. 
+	// In the following function, when stepping over the code with any debugger,
+	//	the mov eax, 9 line will execute, but will not be stepped on by the debugger.
+
+    __asm
+    {
+        push ss
+        pop ss
+        mov eax, 9 // This line executes but is stepped over , call the debugger found or exit process ...
+        xor edx, edx // This is where the debugger will step to
+    }
+}
+
+BOOL IsDbgPresentPrefixCheck()
+{
+	// The IsDbgPresentPrefixCheck works in at least two debuggers
+	// OllyDBG and VS 2008, by utilizing the way the debuggers handle
+	// prefixes we can determine their presence. Specifically if this code
+	// is ran under a debugger it will simply be stepped over;
+	// however, if there is no debugger SEH will fire :D
+
+
+    __try
+    {
+        __asm __emit 0xF3 // 0xF3 0x64 disassembles as PREFIX REP:
+        __asm __emit 0x64
+        __asm __emit 0xF1 // One byte INT 1
+    }
+    __except(EXCEPTION_EXECUTE_HANDLER)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
 }

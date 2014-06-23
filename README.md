@@ -16,20 +16,26 @@ It is licensed under GNU/GPL version 3 and developed in C using Visual C++ 2012 
 # Features :
 
 Debugger Detection :
-- IsDebuggerPresentAPI
-- IsDebuggerPresentPEB
-- CheckRemoteDebuggerPresentAPI
+- IsDebuggerPresent() Win32 API
+- IsDebuggerPresent Using the PEB
+- NtGlobalFlag
+- HeapFlags
+- ForceFlags
+- CheckRemoteDebuggerPresent() Win32 API
 - NtQueryInformationProcess (ProcessDbgPort)
 - NtQueryInformationProcess (ProcessDebugFlags)
-- NtQueryInformationProcess (ProcessDebugObject)
-- NtGlobalFlag
+- NtQueryInformationProcess (ProcessDebugObjectHandle)
+- NtQuerySystemInformation (SystemKernelDebuggerInformation)
 - NtSetInformationThread (HideThreadFromDebugger)
-- Open Process
-- Parent Process
-- Self-Debug (CreateProcess)
-- UnhandledExceptionFilter
 - NtQueryObject (ObjectAllTypesInformation)
 - NtQueryObject (ObjectTypesInformation)
+- UnhandledExceptionFilter
+- OpenProcess (SeDebugPrivilege)
+- Parent Process (Explorer.exe)
+- Self-Debug (CreateProcess)
+
+
+- NtClose/ CloseHandle ()
 
 
 Debugger-Attacks :
@@ -38,23 +44,47 @@ Debugger-Attacks :
 
 Timing Attacks
 - RDTSC
-- Win32Timing (GetTickCount) 
+- GetTickCount
+- RDPMC (todo)
+- GetLocalTime (todo)
+- GetSystemTime (todo)
+- GetTickCount (todo)
+- KiGetTickCount (todo)
+- QueryPerformanceCounter (todo)
+- timeGetTime (todo)
 
 Breakpoint Detection:
-- Software breakpoints detection (INT3 aka 0xCC BP)
+- Software breakpoints detection (INT3 aka 0xCC)
 - Memory Breakpoint detection (Guard Pages)
-- Hardware Breakpoint detection (with Get/SetThreadContext)
-- Hardware Breakpoint detection (with Structured Exception Handling)
+- Hardware Breakpoint detection (Using Get/SetThreadContext)
+- Hardware Breakpoint detection (Using Structured Exception Handling)
+- Breakpoint Detection by CRC (todo)
 
 Anti-Dumping:
 - SizeOfImage (IMAGE_OPTION_HEADER)
 - Erase PE Header
+- Stolen Bytes (Introduuced by Asprotect) (todo)
+- Nanomites (todo)
+- Guard Pages (by Armadillo) (todo)
+
+IA-32 Instruction Exploits & x86 oddities:
+- Interrupt 2D
+- Stack Segment
+- Instruction Prefixes
+
+Obfuscation
+- Junk Code Insertion
+- 
+
+Specific
+- FindWindow () Win32 API
+- OutputDebugString Exploit (OllyDbg)
+
 
 # To do
-
 + More about self debugging
-+ Nanomites
-+ Stolen Bytes
+
+
 
 
 # References
