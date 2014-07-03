@@ -17,10 +17,11 @@ It is licensed under GNU/GPL version 3 and developed in C using Visual C++ 2012 
 
 Debugger Detection :
 - IsDebuggerPresent() Win32 API
-- IsDebuggerPresent Using the PEB
-- NtGlobalFlag
-- HeapFlags
-- ForceFlags
+- PEB.BeingDebuggedFlag
+- PEB.NtGlobalFlag
+- Heap (HeapFlags)
+- Heap (ForceFlags)
+- Heap (TailFlags) (todo) 
 - CheckRemoteDebuggerPresent() Win32 API
 - NtQueryInformationProcess (ProcessDbgPort)
 - NtQueryInformationProcess (ProcessDebugFlags)
@@ -33,16 +34,15 @@ Debugger Detection :
 - OpenProcess (SeDebugPrivilege)
 - Parent Process (Explorer.exe)
 - Self-Debug (CreateProcess)
-
-
 - NtClose/ CloseHandle ()
+- Ctrl-C signal (EXCEPTION_CTL_C)
+- Rogue Int3 (0xCC & 0xCD )
 
-
-Debugger-Attacks :
+Debugger-Attacks:
 - BlockInputAPI
 - OutputDebugString
 
-Timing Attacks
+Timing Checks:
 - RDTSC
 - GetTickCount
 - RDPMC (todo)
@@ -64,27 +64,36 @@ Anti-Dumping:
 - SizeOfImage (IMAGE_OPTION_HEADER)
 - Erase PE Header
 - Stolen Bytes (Introduuced by Asprotect) (todo)
-- Nanomites (todo)
-- Guard Pages (by Armadillo) (todo)
+- Nanomites (Introduced by Armadillo)(todo)
+- Guard Pages (CopyMem2 Armadillo) (todo)
+- IAT Elimination / API Redirection (todo)
+
+Code Virtualization:
+- todo
 
 IA-32 Instruction Exploits & x86 oddities:
 - Interrupt 2D
 - Stack Segment
+- Popf and the trap flag
 - Instruction Prefixes
+- Ice Breakpoint (0xF1)
 
-Obfuscation
+Obfuscation:
 - Junk Code Insertion
-- 
+- Native Code Permutations
 
 Specific
 - FindWindow () Win32 API
 - OutputDebugString Exploit (OllyDbg)
 
+Uncategorized
+- TLS-callback
+- EntryPoint RVA set to 0
+
 
 # To do
+
 + More about self debugging
-
-
 
 
 # References
@@ -93,6 +102,3 @@ Specific
 - Anti-Unpacker Tricks By Peter Ferrie.
 - The Art Of Unpacking By Mark Vincent Yason.
 - http://waleedassar.blogspot.de/ By Walied Assar.
-
-
-

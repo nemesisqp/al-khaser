@@ -20,6 +20,12 @@ int APIENTRY WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	if (NtGlobalFlag())
 		MessageBoxPrintf(TEXT("Detected from : NtGlobalFlags"), szReversingDetected );
+
+	if (HeapFlags())
+		MessageBoxPrintf(TEXT("Detected from : Heap Flags"), szReversingDetected );
+
+	if (ForceFlags())
+		MessageBoxPrintf(TEXT("Detected from : Force Flags"), szReversingDetected );
 		
 	if (NtQueryInformationProcess_ProcessDbgPort ())
 		MessageBoxPrintf(TEXT("Detected from : NtQueryInformationProcess_ProcessDbgPort Flag"), szReversingDetected );
@@ -71,8 +77,6 @@ int APIENTRY WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	if (NtQueryObject_ObjectTypesInformation())
 		MessageBoxPrintf(TEXT("Detected from : NtQueryObject_ObjectTypesInformation"), szReversingDetected );	
 
-
-
 	if(Int2DCheck())
 		MessageBoxPrintf(TEXT("Detected from : Interrupt 2D"), szReversingDetected );
 
@@ -81,22 +85,17 @@ int APIENTRY WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	if (IsDbgPresentPrefixCheck())
 		MessageBoxPrintf(TEXT("Detected from : Instruction Prefixes Check"), szReversingDetected );
 
-	if (HeapFlags())
-		MessageBoxPrintf(TEXT("Detected from : Heap Flags"), szReversingDetected );
-
-	if (ForceFlags())
-		MessageBoxPrintf(TEXT("Detected from : Force Flags"), szReversingDetected );
+	if (CloseHandleAPI ())
+		MessageBoxPrintf(TEXT("Detected from : CloseHandle () API"), szReversingDetected ); 
 
 		*/
 
 
-
-	if (CloseHandleAPI ())
-		MessageBoxPrintf(TEXT("Detected from : CloseHandle () API"), szReversingDetected ); 
+	if( NtQueryInformationProcess_SystemKernelDebuggerInformation())
+		MessageBoxPrintf(TEXT("Detected from : NtQueryInformationProcess_SystemKernelDebuggerInformation"), szReversingDetected );	
 
 
 	else
-
 		MessageBox(NULL,  L"Did you hack me ? :)",szReversingNotDetected , MB_OK + MB_ICONINFORMATION);
 
 }

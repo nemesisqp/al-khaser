@@ -169,30 +169,67 @@ BOOL NtQueryInformationProcess_ProcessDebugObject()
         return false;
 }
 
-BOOL NtGlobalFlag ()
+BOOL NtQueryInformationProcess_SystemKernelDebuggerInformation()
 {
-	/* NtGlobalFlag is a DWORD value inside the process PEB. It contains many flags set by the OS
-	that affects the way the process runs When a process is being debugged, the flags
-	FLG_HEAP_ENABLE_TAIL_CHECK (0x10), FLG_HEAP_ENABLE_FREE_CHECK(0x20), and FLG_HEAP_VALIDATE_PARAMETERS(0x40) 
-	are set for the process, and we can use this to our advantage to identify if our process is being debugged. */
+	/*	This function uses NtQuerySystemInformation using the parameter SystemKernelDebuggerInformation,
+		from class SYSTEM_INFORMATION_CLASS. (value: 35)
+		It will return 2 boolean values :
+			BOOLEAN DebuggerEnabled;
+			BOOLEAN DebuggerNotPresent;
+		(here defined in _SYSTEM_KERNEL_DEBUGGER_INFORMATION).
+		the first one is detecting if debugger is enabled, the second if it's present
+		/!\ A debugger can be present and no enabled. */
 
+    typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION {
+                 BOOLEAN DebuggerEnabled;
+                 BOOLEAN DebuggerNotPresent;
+    } SYSTEM_KERNEL_DEBUGGER_INFORMATION, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION;
+	SYSTEM_KERNEL_DEBUGGER_INFORMATION Info;
 
-	unsigned long NtGlobalFlags = 0;
-	__asm 
+    enum SYSTEM_INFORMATION_CLASS { SystemKernelDebuggerInformation = 35 };
+
+    // Function Pointer Typedef for ZwQuerySystemInformation
+	typedef NTSTATUS  (WINAPI *pZwQuerySystemInformation)(IN SYSTEM_INFORMATION_CLASS SystemInformationClass, IN OUT PVOID SystemInformation, IN ULONG SystemInformationLength, OUT PULONG ReturnLength);
+													
+	// We have to import the function
+	pZwQuerySystemInformation ZwQuerySystemInformation = NULL;
+
+	// Other Vars
+	#define STATUS_SUCCESS   ((NTSTATUS)0x00000000L) 
+    HANDLE hProcess = GetCurrentProcess();
+
+	HMODULE hNtDll = LoadLibrary(TEXT("ntdll.dll"));
+	if(hNtDll == NULL)
 	{
-		mov eax, fs:[30h] 
-		mov eax, [eax + 68h]
-		mov NtGlobalFlags, eax
+		// Handle however.. chances of this failing
+		// is essentially 0 however since
+		// ntdll.dll is a vital system resource
 	}
 
-	if (NtGlobalFlags & 0x70)
-	// 0x70 =  FLG_HEAP_ENABLE_TAIL_CHECK |
-	//         FLG_HEAP_ENABLE_FREE_CHECK | 
-	//         FLG_HEAP_VALIDATE_PARAMETERS
-		return TRUE;
+	ZwQuerySystemInformation = (pZwQuerySystemInformation)GetProcAddress(hNtDll, "ZwQuerySystemInformation");
+	
+	if(ZwQuerySystemInformation == NULL)
+	{
+		// Handle however it fits your needs but as before,
+		// if this is missing there are some SERIOUS issues with the OS
+	}
 
-	else
-		return FALSE;
+	// Time to finally make the call
+    if (STATUS_SUCCESS == ZwQuerySystemInformation(SystemKernelDebuggerInformation, &Info, sizeof(Info), NULL))
+	{
+			if (Info.DebuggerEnabled)
+			{
+				if (Info.DebuggerNotPresent)
+				{
+					return FALSE;
+				}
+				else
+				{
+					return TRUE;
+				}
+			}
+
+	}
 }
 
 BOOL NtSetInformationThread_ThreadHideFromDebugger()
@@ -505,14 +542,40 @@ BOOL CloseHandleAPI()
 
 }
 
+BOOL NtGlobalFlag ()
+{
+	/* NtGlobalFlag is a DWORD value inside the process PEB. It contains many flags set by the OS
+	that affects the way the process runs When a process is being debugged, the flags
+	FLG_HEAP_ENABLE_TAIL_CHECK (0x10), FLG_HEAP_ENABLE_FREE_CHECK(0x20), and FLG_HEAP_VALIDATE_PARAMETERS(0x40) 
+	are set for the process, and we can use this to our advantage to identify if our process is being debugged. */
+
+
+	unsigned long NtGlobalFlags = 0;
+	__asm 
+	{
+		mov eax, fs:[30h] 
+		mov eax, [eax + 68h] 
+		mov NtGlobalFlags, eax
+	}
+
+	if (NtGlobalFlags & 0x70)
+	// 0x70 =  FLG_HEAP_ENABLE_TAIL_CHECK |
+	//         FLG_HEAP_ENABLE_FREE_CHECK | 
+	//         FLG_HEAP_VALIDATE_PARAMETERS
+		return TRUE;
+
+	else
+		return FALSE;
+}
+
 BOOL HeapFlags()
 {
 	char IsBeingDbg = FALSE;
 
 	__asm {
 		mov eax, FS:[0x30]
-		mov eax, [EAX+0x18]
-		mov eax, [EAX+0x44]
+		mov eax, [eax+0x18] ; PEB.ProcessHeap 
+		mov eax, [eax+0x44]
 		cmp eax, 0
 		je DebuggerNotFound
 		mov IsBeingDbg, 1
@@ -527,11 +590,11 @@ BOOL ForceFlags ()
 	char IsBeingDbg = 0;
 
 	__asm {
-		MOV EAX, FS:[0x30]
-		MOV EAX, [EAX+0x18]
-		MOV EAX, [EAX+0x40]
-		DEC EAX
-		DEC EAX
+		mov eax, FS:[0x30]
+		mov eax, [eax+0x18] ; PEB.ProcessHeap 
+		mov eax, [eax+0x40]
+		dec eax
+		dec eax
 		jne DebuggerFound
 		jmp ExitMe
 		DebuggerFound:

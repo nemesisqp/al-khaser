@@ -13,6 +13,8 @@ BOOL NtQueryInformationProcess_ProcessDebugFlags();
 
 BOOL NtQueryInformationProcess_ProcessDebugObject();
 
+BOOL NtQueryInformationProcess_SystemKernelDebuggerInformation();
+
 BOOL NtSetInformationThread_ThreadHideFromDebugger();
 
 BOOL NtGlobalFlag ();
