@@ -215,18 +215,13 @@ BOOL NtQueryInformationProcess_SystemKernelDebuggerInformation()
 	}
 
 	// Time to finally make the call
-    if (STATUS_SUCCESS == ZwQuerySystemInformation(SystemKernelDebuggerInformation, &Info, sizeof(Info), NULL))
-	{
+    if (STATUS_SUCCESS == ZwQuerySystemInformation(SystemKernelDebuggerInformation, &Info, sizeof(Info), NULL)){
 			if (Info.DebuggerEnabled)
 			{
 				if (Info.DebuggerNotPresent)
-				{
 					return FALSE;
-				}
 				else
-				{
 					return TRUE;
-				}
 			}
 
 	}

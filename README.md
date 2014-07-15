@@ -41,6 +41,7 @@ Debugger Detection :
 Debugger-Attacks:
 - BlockInputAPI
 - OutputDebugString
+- Misdirection / Stopping via Exceptions (todo)
 
 Timing Checks:
 - RDTSC
@@ -52,6 +53,7 @@ Timing Checks:
 - KiGetTickCount (todo)
 - QueryPerformanceCounter (todo)
 - timeGetTime (todo)
+- TickCount / TickCountMultiplier (todo)
 
 Breakpoint Detection:
 - Software breakpoints detection (INT3 aka 0xCC)
@@ -78,17 +80,42 @@ IA-32 Instruction Exploits & x86 oddities:
 - Instruction Prefixes
 - Ice Breakpoint (0xF1)
 
-Obfuscation:
-- Junk Code Insertion
-- Native Code Permutations
+File-format tricks:
+- Non-aligned SizeOfImage
+- Overlapping structures
+- Non-standard NumberOfRvaAndSizes
+- Non-aligned SizeOfRawData
+- Non-aligned PointerToRawData
+- No section table
 
-Specific
+Anti-Emulation:
+- Invalid API parameters (todo)
+- Modern CPU instructions (todo)
+- Undocumented instructions (todo)
+- Time-locks (todo)
+
+Obfuscation:
+- Junk Code Insertion (todo)
+- Native Code Permutations (todo)
+- VFTables (todo)
+- Exceptions (SEH) (todo)
+- Forcing inlines  (todo)
+
+Specific:
 - FindWindow () Win32 API
 - OutputDebugString Exploit (OllyDbg)
+- Device Drivers Names (todo)
 
-Uncategorized
-- TLS-callback
+Uncategorized:
+- TLS-callback (todo)
+- Fake signatures (todo)
 - EntryPoint RVA set to 0
+
+Packing:
+- Multi-threaded packers
+
+Kernel-Bugs:
+- ProcessIoPriority 
 
 
 # To do

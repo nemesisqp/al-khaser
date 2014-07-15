@@ -89,13 +89,13 @@ int APIENTRY WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		MessageBoxPrintf(TEXT("Detected from : CloseHandle () API"), szReversingDetected ); 
 
 		*/
+	Bug_ProcessIoPriority () ;
+
+	//if( NtQueryInformationProcess_SystemKernelDebuggerInformation())
+	//	MessageBoxPrintf(TEXT("Detected from : NtQueryInformationProcess_SystemKernelDebuggerInformation"), szReversingDetected );	
 
 
-	if( NtQueryInformationProcess_SystemKernelDebuggerInformation())
-		MessageBoxPrintf(TEXT("Detected from : NtQueryInformationProcess_SystemKernelDebuggerInformation"), szReversingDetected );	
-
-
-	else
-		MessageBox(NULL,  L"Did you hack me ? :)",szReversingNotDetected , MB_OK + MB_ICONINFORMATION);
+	//else
+	//	MessageBox(NULL,  L"Did you hack me ? :)",szReversingNotDetected , MB_OK + MB_ICONINFORMATION);
 
 }

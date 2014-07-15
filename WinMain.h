@@ -4,5 +4,6 @@
 #include "Commun.h"
 #include "DebuggerDetection.h"
 #include "BreakpointDetection.h"
+#include "Kernel-Bugs.h"
 
 
